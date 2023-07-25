@@ -40,6 +40,7 @@ def login_user():
         flash("Invalid Password", "login")
         return redirect('/')
     session['user_id'] = found_user.id
+    session['name'] = found_user.first_name
     return redirect('/dashboard')
 
 

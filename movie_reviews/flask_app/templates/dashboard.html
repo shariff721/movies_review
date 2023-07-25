@@ -33,6 +33,13 @@
             <span><img src="static/img/Aquaman.jpg" alt="Movie_Five" class="Movie_Five"><br>Movie_Five</span>
         </span>
     </div>
+    <div>
+        {% for one_movie in all_movie%}
+        <ul>
+            <li>{{one_movie.title}}</li>
+        </ul>
+        {% endfor%}
+    </div>
     <input type="submit" value="Reviews" class="btn btn-primary col-3 mt-2 border border-1">
 </body>
 
