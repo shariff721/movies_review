@@ -4,6 +4,6 @@ from flask_app.models import user, review, movie
 
 
 @app.route("/dashboard")
-def home_page():
+def dashboard():
     all_movies = movie.Movie.get_all_movies()
     return render_template("dashboard.html", all_movies=all_movies)
