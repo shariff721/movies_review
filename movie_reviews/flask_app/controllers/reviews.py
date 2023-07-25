@@ -1,66 +1,86 @@
 from flask import render_template, redirect, session, request
 from flask_app import app
 
-from flask_app.models import user, review
+from flask_app.models import user, review, movie
 
 
 # Visible routes
 
-@app.route("/dashboard")
-def home_page():
-    return render_template("dashboard.html")
+
+@app.route("/comments")
+def all_posted_reviews_page():
+    if 'user_id' not in session:
+        return redirect('/')
+    
+    all_reviews = review.Review.get_all_reviews()
+    return render_template("posted_reviews.html", all_reviews=all_reviews)
 
 
-# @app.route("/comments")
-# def all_posted_reviews_page():
-#     if 'user_id' not in session:
-#         return redirect('/')
-#     data = {
-#         'id': session['user_id']
-#     }
-#     return render_template("posted_reviews.html", user_logged=user.User.get_user_by_id(data))
+@app.route("/new/review")
+def add_review_page():
+    if 'user_id' not in session:
+        return redirect("/")
+    data = {
+        'id': session['user_id']
+    }
+    all_movies = movie.Movie.get_all_movies()
+    return render_template("new_review.html", user_logged=user.User.get_user_by_id(data),all_movies=all_movies)
 
 
-# @app.route("/new/review")
-# def add_review_page():
-#     if 'user_id' not in session:
-#         return redirect("/")
-#     data = {
-#         'id': session['user_id']
-#     }
-#     return render_template("new_review.html", user_logged=user.User.get_user_by_id(data))
+@app.route("/reviews/add_to_db", methods=["POST"])
+def add_review_to_db():
+    data = {
+        'body': request.form['body'],
+        'recommended': request.form['inlineRadioOptions'],
+        'date_reviewed': request.form['date_reviewed'],
+        'user_id': session['user_id'],
+        'movie_id': request.form['movie_id'],
+    }
+    review.Review.save_review(data)
+    return redirect('/comments')
 
 
-# @app.route("/edit/<int:id>")
-# def edit_review_page(id):
-#     pass
+@app.route("/edit/<int:id>")
+def edit_review_page(id):
+    one_review = review.Review.get_one_review({"id": id})
+    all_movies = movie.Movie.get_all_movies()
+    return render_template("edit_review.html", one_review = one_review, all_movies=all_movies)
 
 
-# @app.route("/show/<int:id>")
-# def review_info_page(id):
-#     if 'user_id' not in session:
-#         return redirect('/')
-#     data = {
-#         'id': id,
-#     }
-#     form_data = {
-#         'id': session['user_id']
-#     }
-#     print(request.form)
-#     return render_template("show_review.html", user_logged=user.User.get_user_by_id(form_data))
+@app.route("/edit/reviews/", methods=["POST"])
+def update_review():
+    data = {
+        'body': request.form['body'],
+        'recommended': request.form['inlineRadioOptions'],
+        'date_reviewed': request.form['date_reviewed'],
+    }
+    review.Review.review_update(data)
+    return redirect('/comments')
 
 
-# # Hidden routes
-# @app.route("/reviews/<int:id>/delete")
-# def delete(id):
-#     pass
+@app.route('/delete/review/<int:id>')
+def delete_review(id):
+    data = {
+        'id': id
+    }
+    review.Review.delete_review(data)
+    return redirect(request.referrer)
 
 
-# @app.route("/reviews/add_to_db", methods=["POST"])
-# def add_review_to_db():
-#     pass
+@app.route("/show/<int:id>")
+def review_info_page(id):
+    if 'user_id' not in session:
+        return redirect('/')
+    data = {
+        'id': id,
+    }
+    form_data = {
+        'id': session['user_id']
+    }
+    one_review = review.Review.get_one_review(data)
+    return render_template("show_review.html", one_review=one_review,user_logged=user.User.get_user_by_id(form_data))
 
 
-# @app.route("/reviews/<int:id>/edit_in_db", methods=["POST"])
-# def update(id):
-#     pass
+
+
+

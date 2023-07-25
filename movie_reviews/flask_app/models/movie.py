@@ -9,11 +9,40 @@ class Movie:
     def __init__(self, data):
         self.id = data['id']
         self.title = data['title']
+        
+        self.reviews = []
 
     @classmethod
     def save_movie(cls, data):
         query = " INSERT INTO movies (title) VALUES (%(title)s);"
         return connectToMySQL(cls.db).query_db(query, data)
+    
+    
+    
+    # @classmethod
+    # def get_movie_with_review(cls, data):
+    #     query = """
+    #         SELECT * FROM movies 
+    #         JOIN reviews ON movies.id = reviews.movie_id
+    #         WHERE movies.id = %(id)s;
+    #     """
+    #     results = connectToMySQL(cls.db).query_db(query,data)
+    #     one_movie = cls(results[0])
+        
+    #     for review_dict in results:
+    #         review_dict = {
+    #             "id": review_dict["reviews.id"],
+    #             "body": review_dict["body"],
+    #             "recommended": review_dict["recommended"],
+    #             "date_reviewed": review_dict["date_reviewed"],
+    #             "user_id": review_dict["user_id"],
+    #             "movie_id": review_dict["movie_id"]
+    #         }
+    #         one_review = review.Review(review_dict)
+    #         one_movie.reviews.append(one_review)
+    #     return one_movie
+        
+        
 
     @classmethod
     def get_all_movies(cls):
