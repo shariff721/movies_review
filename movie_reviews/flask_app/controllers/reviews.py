@@ -29,15 +29,18 @@ def add_review_page():
 
 @app.route("/reviews/add_to_db", methods=["POST"])
 def add_review_to_db():
-    data = {
-        'body': request.form['body'],
-        'recommended': request.form['recommended'],
-        'date_reviewed': request.form['date_reviewed'],
-        'user_id': session['user_id'],
-        'movie_id': request.form['movie_id'],
-    }
-    review.Review.save_review(data)
-    return redirect('/comments')
+    if not review.Review.validate_review(request.form):
+        return redirect(request.referrer)
+    else:
+        data = {
+            'body': request.form['body'],
+            'recommended': request.form['recommended'],
+            'date_reviewed': request.form['date_reviewed'],
+            'user_id': session['user_id'],
+            'movie_id': request.form['movie_id'],
+        }
+        review.Review.save_review(data)
+        return redirect('/comments')
 
 
 @app.route("/edit/<int:id>")
@@ -49,16 +52,19 @@ def edit_review_page(id):
 
 @app.route("/edit/reviews/", methods=["POST"])
 def update_review():
-    data = {
-        'body': request.form['body'],
-        'recommended': request.form['recommended'],
-        'date_reviewed': request.form['date_reviewed'],
-        'user_id': session['user_id'],
-        'movie_id': request.form['movie_id'],
-        'id': request.form['id']
-    }
-    review.Review.review_update(data)
-    return redirect('/comments')
+    if not review.Review.validate_review(request.form):
+        return redirect(request.referrer)
+    else:
+        data = {
+            'body': request.form['body'],
+            'recommended': request.form['recommended'],
+            'date_reviewed': request.form['date_reviewed'],
+            'user_id': session['user_id'],
+            'movie_id': request.form['movie_id'],
+            'id': request.form['id']
+        }
+        review.Review.review_update(data)
+        return redirect('/comments')
 
 
 @app.route('/delete/review/<int:id>')

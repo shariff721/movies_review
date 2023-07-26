@@ -14,13 +14,14 @@
         <div class="container-fluid d-flex justify-content-between grid gap-3">
             <h2>Welcome {{session['name'] }}</h2>
             <div class="d-flex justify-content-between grid gap-3">
-                <a href="/comments" class="btn btn-light shadow p-2 bg-body-tertiary rounded">Reviews</a>
+                <a href="/dashboard" class="btn btn-light shadow mt-2 bg-body-tertiary rounded">Home</a>
+                <a href="/comments" class="btn btn-light shadow mt-2 bg-body-tertiary rounded">Reviews</a>
                 <a href="/logout" class="btn btn-light shadow mt-2 p-2 bg-body-tertiary rounded">Logout</a>
             </div>
         </div>
     </nav>
     <div>
-        <h1>Movie: {{one_review.get_movie_name()}}</h1>
+        <h2>Movie: {{one_review.get_movie_name()}}</h2>
     </div>
     <div>
         <h3>Posted By: {{ one_review.get_first_name()}}</h3>

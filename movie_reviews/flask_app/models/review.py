@@ -66,3 +66,21 @@ class Review:
         """
         results = connectToMySQL(cls.db).query_db(query,data)
         return cls(results[0])
+    
+    
+    @staticmethod
+    def validate_review(review):
+        is_valid = True
+
+        if len(review['body']) < 5:
+            flash("Review must be atleat 3 characters.", "review")
+            is_valid = False
+
+        if len(review['date_reviewed']) < 3:
+            flash("Date cannot be left empty.", "review")
+            is_valid = False
+            
+        if "recommended" not in review:
+            flash(" Recommended cannot be left Empty")
+            is_valid = False
+        return is_valid

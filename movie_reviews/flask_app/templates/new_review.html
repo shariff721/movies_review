@@ -14,6 +14,7 @@
         <div class="container-fluid d-flex justify-content-between grid gap-3">
             <h2>Welcome {{session['name']}}</h2>
             <div class="d-flex justify-content-between grid gap-3">
+                <a href="/dashboard" class="btn btn-light shadow mt-2 bg-body-tertiary rounded">Home</a>
                 <a href="/comments" class="btn btn-light shadow mt-2 bg-body-tertiary rounded">Reviews</a>
                 <a href="/logout" class="btn btn-light shadow mt-2 p-2 bg-body-tertiary rounded">Logout</a>
             </div>
@@ -22,6 +23,13 @@
     <div class="col-5 my-8 mx-auto">
         <h2>Add a Review</h2>
         <form action="/reviews/add_to_db" method="POST" class="col-4 my-5 mx-auto">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <p class="text-danger">{{message}}</p>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
             <div class="d-flex justify-content-between">
                 <h3>Review Movie</h3>
             </div>
