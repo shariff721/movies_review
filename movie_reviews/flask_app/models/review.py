@@ -24,7 +24,7 @@ class Review:
     def review_update(cls,data):
         query = """
             UPDATE reviews
-            SET body = %(body)s, recommended = %(recommended)s, date_reviewed = %(date_reviewed)s
+            SET body = %(body)s, recommended = %(recommended)s, date_reviewed = %(date_reviewed)s, user_id = %(user_id)s, movie_id = %(movie_id)s
             WHERE id = %(id)s;
         """
         return connectToMySQL(cls.db).query_db(query, data)

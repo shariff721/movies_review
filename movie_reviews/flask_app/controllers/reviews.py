@@ -31,7 +31,7 @@ def add_review_page():
 def add_review_to_db():
     data = {
         'body': request.form['body'],
-        'recommended': request.form['inlineRadioOptions'],
+        'recommended': request.form['recommended'],
         'date_reviewed': request.form['date_reviewed'],
         'user_id': session['user_id'],
         'movie_id': request.form['movie_id'],
@@ -51,8 +51,11 @@ def edit_review_page(id):
 def update_review():
     data = {
         'body': request.form['body'],
-        'recommended': request.form['inlineRadioOptions'],
+        'recommended': request.form['recommended'],
         'date_reviewed': request.form['date_reviewed'],
+        'user_id': session['user_id'],
+        'movie_id': request.form['movie_id'],
+        'id': request.form['id']
     }
     review.Review.review_update(data)
     return redirect('/comments')
