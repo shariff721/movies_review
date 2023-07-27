@@ -16,7 +16,10 @@ class Review:
         
     @classmethod
     def save_review(cls, data):
-        query = "INSERT INTO reviews (body,recommended,date_reviewed,user_id,movie_id) VALUES(%(body)s,%(recommended)s,%(date_reviewed)s,%(user_id)s,%(movie_id)s)"
+        query = """
+                INSERT INTO reviews (body,recommended,date_reviewed,user_id,movie_id) 
+                VALUES(%(body)s,%(recommended)s,%(date_reviewed)s,%(user_id)s,%(movie_id)s)
+                """
         return connectToMySQL(cls.db).query_db(query, data)
     
     
@@ -66,6 +69,55 @@ class Review:
         """
         results = connectToMySQL(cls.db).query_db(query,data)
         return cls(results[0])
+    
+    @classmethod
+    def get_by_id(cls,data):
+        query = """
+                SELECT * FROM reviews
+                JOIN users on reviews.user_id = users.id
+                WHERE reviews.id = %(id)s;
+                """
+        result = connectToMySQL("movies").query_db(query,data)
+        if not result:
+            return False
+
+        result = result[0]
+        this_review = cls(result)
+        user_data = {
+                "id": result['users.id'],
+                "first_name": result['first_name'],
+                "last_name": result['last_name'],
+                "email": result['email'],
+                "password": "",
+                "created_at": result['users.created_at'],
+                "updated_at": result['users.updated_at']
+        }
+        this_review.user = user.User(user_data)
+        return this_review
+    
+    @classmethod
+    def get_all_reviews_with_users(cls):
+        query = """
+        SELECT * FROM reviews JOIN users ON reviews.user_id = users.id;
+        """
+        results = connectToMySQL(cls.db).query_db(query)
+        review_object_list = []
+        for each_review_dictionary in results:
+            print(each_review_dictionary)
+            new_review_object = cls(each_review_dictionary)
+            new_user_dictionary = {
+                "id": each_review_dictionary["users.id"],
+                "first_name": each_review_dictionary["first_name"],
+                "last_name": each_review_dictionary["last_name"],
+                "email": each_review_dictionary["email"],
+                "password": each_review_dictionary["password"],
+                "created_at": each_review_dictionary["users.created_at"],
+                "updated_at": each_review_dictionary["users.updated_at"],
+            }
+            new_user_object = user.User(new_user_dictionary)
+            new_review_object.user = new_user_object
+            review_object_list.append(new_review_object)
+        return review_object_list
     
     
     @staticmethod
