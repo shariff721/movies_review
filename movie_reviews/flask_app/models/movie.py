@@ -65,27 +65,51 @@ class Movie:
         return is_valid
 
 
+    @classmethod
+    def get_movie_with_review(cls, data):
+        query = """
+            SELECT * FROM movies 
+            JOIN reviews ON movies.id = reviews.movie_id
+            WHERE movies.id = %(id)s;
+        """
+        results = connectToMySQL(cls.db).query_db(query,data)
+        one_movie = cls(results[0])
+        
+        for review_dict in results:
+            review_dict = {
+                "id": review_dict["reviews.id"],
+                "body": review_dict["body"],
+                "recommended": review_dict["recommended"],
+                "date_reviewed": review_dict["date_reviewed"],
+                "user_id": review_dict["user_id"],
+                "movie_id": review_dict["movie_id"]
+            }
+            one_review = review.Review(review_dict)
+            one_movie.reviews.append(one_review)
+        return one_movie
+        
     # @classmethod
-    # def get_movie_with_review(cls, data):
+    # def get_by_id(cls,data):
     #     query = """
-    #         SELECT * FROM movies 
-    #         JOIN reviews ON movies.id = reviews.movie_id
-    #         WHERE movies.id = %(id)s;
-    #     """
-    #     results = connectToMySQL(cls.db).query_db(query,data)
-    #     one_movie = cls(results[0])
-        
-    #     for review_dict in results:
-    #         review_dict = {
-    #             "id": review_dict["reviews.id"],
-    #             "body": review_dict["body"],
-    #             "recommended": review_dict["recommended"],
-    #             "date_reviewed": review_dict["date_reviewed"],
-    #             "user_id": review_dict["user_id"],
-    #             "movie_id": review_dict["movie_id"]
-    #         }
-    #         one_review = review.Review(review_dict)
-    #         one_movie.reviews.append(one_review)
-    #     return one_movie
-        
+    #             SELECT * FROM movies
+    #             JOIN users on movies.user_id = users.id
+    #             WHERE movies.id = %(id)s;
+    #             """
+    #     result = connectToMySQL("movies").query_db(query,data)
+    #     if not result:
+    #         return False
+
+    #     result = result[0]
+    #     this_movie = cls(result)
+    #     user_data = {
+    #             "id": result['users.id'],
+    #             "first_name": result['first_name'],
+    #             "last_name": result['last_name'],
+    #             "email": result['email'],
+    #             "password": "",
+    #             "created_at": result['users.created_at'],
+    #             "updated_at": result['users.updated_at']
+    #     }
+    #     this_movie.user = user.User(user_data)
+    #     return this_movie
         
